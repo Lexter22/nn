@@ -1,0 +1,241 @@
+/* Custom Styles for School Clinic System */
+
+/* Logo Styles */
+.logo-img {
+    height: 40px;
+    width: auto;
+}
+
+.logo-fallback {
+    display: none;
+}
+
+/* Nurse fAIth Feature Section */
+.nurse-faith-section {
+    background-color: #f8f9fa;
+}
+
+/* Nurse fAIth CTA Section */
+.nurse-faith-cta {
+    background-color: #e7f3ff;
+    border-top: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.nurse-faith-cta .btn {
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+}
+
+.nurse-faith-cta .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.chat-preview-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.chat-preview-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 15px 15px 0 0;
+    font-size: 1rem;
+}
+
+.chat-preview-body {
+    padding: 20px;
+}
+
+.message-bubble {
+    background: #e9ecef;
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 0.9rem;
+    color: #495057;
+    display: inline-block;
+    max-width: 100%;
+}
+
+.message-bubble.system {
+    background: #e9ecef;
+    color: #6c757d;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 100px 0;
+    text-align: center;
+}
+
+.hero-section h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.hero-section p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+/* Services Section */
+.services-section {
+    padding: 80px 0;
+    background-color: #f8f9fa;
+}
+
+.service-card {
+    transition: transform 0.3s ease;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+}
+
+.service-icon {
+    font-size: 3rem;
+    color: #667eea;
+    margin-bottom: 1rem;
+}
+
+/* Chat Widget */
+.chat-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.chat-toggle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #667eea;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.chat-toggle:hover {
+    background: #5a6fd8;
+    transform: scale(1.1);
+}
+
+.chat-box {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 350px;
+    height: 450px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    display: none;
+    flex-direction: column;
+}
+
+.chat-header {
+    background: #667eea;
+    color: white;
+    padding: 15px;
+    border-radius: 10px 10px 0 0;
+    font-weight: 600;
+}
+
+.chat-body {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.chat-footer {
+    padding: 15px;
+    border-top: 1px solid #eee;
+}
+
+.chat-input {
+    border: 1px solid #ddd;
+    border-radius: 20px 0 0 20px;
+    padding: 8px 15px;
+    outline: none;
+    flex: 1;
+}
+
+.chat-send-btn {
+    border-radius: 0 20px 20px 0;
+    padding: 8px 12px;
+}
+
+.system-message {
+    margin-bottom: 15px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+    
+    .chat-box {
+        width: 320px;
+    }
+}
+
+/* Sticky Footer for Login Pages */
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.login-page .container-fluid {
+    flex: 1;
+}
+
+.login-page footer {
+    margin-top: auto;
+}
+
+/* Login Page Image */
+.login-image-container {
+    height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.fallback-bg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.fallback-bg::after {
+    content: "🏥";
+    font-size: 8rem;
+}
+
+.login-form-container {
+    width: 100%;
+    max-width: 400px;
+}
