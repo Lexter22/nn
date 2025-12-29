@@ -14,30 +14,33 @@ class DatabaseSearch {
      * SQL: WHERE name LIKE :search OR category LIKE :search
      */
     public function searchMedicines($search) {
-        $sql = "SELECT * FROM medicines 
-                WHERE name LIKE :search OR category LIKE :search 
+        $sql = "SELECT id, name, category, stock_quantity, expiry_date, status
+                FROM medicines
+                WHERE name LIKE :search OR category LIKE :search
                 ORDER BY name ASC";
         
         $stmt = $this->pdo->prepare($sql);
-        $searchTerm = '%' . $search . '%';
-        $stmt->bindParam(':search', $searchTerm, PDO::PARAM_STR);
+        $term = '%' . $search . '%';
+        $stmt->bindParam(':search', $term, PDO::PARAM_STR);
         $stmt->execute();
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
     /**
-     * Search patient records by patient name or diagnosis
+     * Search patient visits by patient name or symptom/notes/treatment
      * SQL: WHERE patient_name LIKE :search OR diagnosis LIKE :search
      */
     public function searchPatientRecords($search) {
-        $sql = "SELECT * FROM patient_records 
-                WHERE patient_name LIKE :search OR diagnosis LIKE :search 
-                ORDER BY date DESC";
+        $sql = "SELECT v.visit_date, p.name, v.bp, v.temp, v.symptom, v.notes, v.treatment, v.disposition
+                FROM visits v
+                JOIN patients p ON p.id = v.patient_id
+                WHERE p.name LIKE :q OR v.symptom LIKE :q OR v.notes LIKE :q OR v.treatment LIKE :q
+                ORDER BY v.visit_date DESC";
         
         $stmt = $this->pdo->prepare($sql);
-        $searchTerm = '%' . $search . '%';
-        $stmt->bindParam(':search', $searchTerm, PDO::PARAM_STR);
+        $term = '%' . $search . '%';
+        $stmt->bindParam(':q', $term, PDO::PARAM_STR);
         $stmt->execute();
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -47,19 +50,20 @@ class DatabaseSearch {
      * Get all medicines (no search)
      */
     public function getAllMedicines() {
-        $sql = "SELECT * FROM medicines ORDER BY name ASC";
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->pdo->prepare("SELECT id, name, category, stock_quantity, expiry_date, status FROM medicines ORDER BY name ASC");
         $stmt->execute();
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
     /**
-     * Get all patient records (no search)
+     * Get all patient visit records (no search)
      */
     public function getAllPatientRecords() {
-        $sql = "SELECT * FROM patients ORDER BY date DESC";
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->pdo->prepare("SELECT v.visit_date, p.name, v.bp, v.temp, v.symptom, v.notes, v.treatment, v.disposition
+                                     FROM visits v
+                                     JOIN patients p ON p.id = v.patient_id
+                                     ORDER BY v.visit_date DESC");
         $stmt->execute();
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

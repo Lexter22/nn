@@ -1,79 +1,77 @@
--- Charset/engine defaults for XAMPP MySQL/MariaDB
-SET NAMES utf8mb4;
-SET time_zone = '+00:00';
+CREATE DATABASE school_clinic_database;
+USE school_clinic_database;
 
-CREATE DATABASE IF NOT EXISTS clinic_database;
--- Users: login accounts (supports plain or hashed passwords)
-CREATE TABLE IF NOT EXISTS users (
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0; -- Disable foreign key checks to allow drops
+
+-- 1. Reset Tables (Clean Slate)
+DROP TABLE IF EXISTS visits;
+DROP TABLE IF EXISTS patients;
+DROP TABLE IF EXISTS medicines;
+DROP TABLE IF EXISTS users;
+
+SET FOREIGN_KEY_CHECKS = 1; -- Re-enable checks
+
+-- --------------------------------------------------------
+
+-- 2. Users Table (Staff/Admins)
+CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(64) NOT NULL UNIQUE,
-  email VARCHAR(120) UNIQUE NULL,
-  -- Either 'password' (plain for demo) or 'password_hash' (bcrypt) may be used
-  password VARCHAR(255) NULL,
-  password_hash VARCHAR(255) NULL,
-  role ENUM('admin','nurse') NOT NULL DEFAULT 'nurse',
+  password VARCHAR(255) NOT NULL, -- Supports both plain text (for now) or Hash
+  role ENUM('admin', 'nurse') NOT NULL DEFAULT 'nurse',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Medicines inventory
-CREATE TABLE IF NOT EXISTS medicines (
+-- --------------------------------------------------------
+
+-- 3. Medicines Inventory
+CREATE TABLE medicines (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(120) NOT NULL,
-  category VARCHAR(80) NOT NULL,
+  category VARCHAR(80) NOT NULL, -- e.g., 'Analgesic', 'Antibiotic'
   stock_quantity INT NOT NULL DEFAULT 0,
   expiry_date DATE NOT NULL,
-  status VARCHAR(16) NOT NULL, -- values used: 'available','low','out','expired'
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  KEY idx_meds_name (name),
-  KEY idx_meds_category (category),
-  KEY idx_meds_expiry (expiry_date),
-  KEY idx_meds_status (status)
+  status VARCHAR(20) NOT NULL, -- 'available', 'low', 'out', 'expired'
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Patients master (minimal fields; extend as needed)
-CREATE TABLE IF NOT EXISTS patients (
+-- --------------------------------------------------------
+
+-- 4. Patients Master List (Demographics)
+-- This separates the STUDENT from the VISIT.
+CREATE TABLE patients (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(120) NOT NULL,
+  student_number VARCHAR(50) UNIQUE NULL, -- e.g., '2023-001-BN'
+  course_section VARCHAR(50) NULL,        -- e.g., 'BSIT 3-1'
+  allergies TEXT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  KEY idx_patients_name (name)
+  INDEX idx_name (name) -- Makes searching faster
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Visits (used for today's visits count)
-CREATE TABLE IF NOT EXISTS visits (
+-- --------------------------------------------------------
+
+-- 5. Visits (The Medical Records)
+-- This links to 'patients' and contains the SOAP data.
+CREATE TABLE visits (
   id INT AUTO_INCREMENT PRIMARY KEY,
   patient_id INT NOT NULL,
-  visit_date DATE NOT NULL,
-  notes TEXT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_visits_patient
-    FOREIGN KEY (patient_id) REFERENCES patients(id)
-    ON DELETE CASCADE ON UPDATE CASCADE,
-  KEY idx_visits_date (visit_date),
-  KEY idx_visits_created (created_at),
-  KEY idx_visits_patient (patient_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  
+  -- VITAL SIGNS (Objective)
+  visit_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+  bp VARCHAR(20) NULL,      -- e.g., '120/80'
+  temp DECIMAL(4,1) NULL,   -- e.g., 36.5
 
--- Patient records (fallback for counts and reporting)
-CREATE TABLE IF NOT EXISTS patient_records (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  patient_id INT NOT NULL,
-  visit_date DATE NULL,        -- optional; some code uses created_at as visit date
-  remarks TEXT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_records_patient
-    FOREIGN KEY (patient_id) REFERENCES patients(id)
-    ON DELETE CASCADE ON UPDATE CASCADE,
-  KEY idx_records_created (created_at),
-  KEY idx_records_visit (visit_date),
-  KEY idx_records_patient (patient_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  -- SOAP NOTES
+  symptom TEXT NOT NULL,    -- Chief Complaint (Subjective)
+  notes TEXT NULL,          -- Nurse's Assessment
+  treatment TEXT NULL,      -- Meds given / Intervention (Plan)
+  
+  -- OUTCOME
+  disposition VARCHAR(50) DEFAULT 'Back to Class', -- 'Sent Home', 'Hospital'
 
--- Seed: Super Admin and Nurse (plain passwords for simplicity)
-INSERT INTO users (username, email, password, role)
-VALUES
-  ('admin', NULL, 'Admin@123', 'admin'),
-  ('nurse', NULL, 'Nurse@123', 'nurse')
-ON DUPLICATE KEY UPDATE
-  email = VALUES(email),
-  password = VALUES(password),
-  role = VALUES(role);
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  
+  FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

@@ -1,4 +1,5 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
@@ -14,23 +15,18 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <nav class="sidebar-nav p-3">
         <ul class="nav flex-column">
             <li class="nav-item mb-2">
-                <a class="nav-link <?php echo ($current_page == 'dashboard.php') ? 'active' : ''; ?>" href="dashboard.php">
+                <a class="nav-link <?php echo ($current_page == 'reports.php' || $current_page == 'dashboard.php') ? 'active' : ''; ?>" href="reports.php">
                     <i class="bi bi-speedometer2 me-2"></i>Dashboard
                 </a>
             </li>
             <li class="nav-item mb-2">
-                <a class="nav-link <?php echo ($current_page == 'patient_records.php') ? 'active' : ''; ?>" href="patient_records.php">
+                <a class="nav-link <?php echo ($current_page == 'patients_records.php') ? 'active' : ''; ?>" href="patients_records.php">
                     <i class="bi bi-folder2-open me-2"></i>Patient Records
                 </a>
             </li>
             <li class="nav-item mb-2">
-                <a class="nav-link <?php echo ($current_page == 'inventory.php') ? 'active' : ''; ?>" href="inventory.php">
+                <a class="nav-link <?php echo ($current_page == 'medicines.php') ? 'active' : ''; ?>" href="medicines.php">
                     <i class="bi bi-capsule me-2"></i>Medicine Inventory
-                </a>
-            </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link <?php echo ($current_page == 'reports.php') ? 'active' : ''; ?>" href="reports.php">
-                    <i class="bi bi-file-earmark-text me-2"></i>Reports
                 </a>
             </li>
         </ul>
@@ -39,9 +35,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
         
         <div class="user-info">
             <small class="text-muted d-block">Logged in as:</small>
-            <strong><?php echo htmlspecialchars($_SESSION['username']); ?></strong>
+            <strong><?php echo htmlspecialchars($_SESSION['username'] ?? ''); ?></strong>
             <div class="mt-2">
-                <a href="process.php?action=logout" class="btn btn-outline-danger btn-sm">
+                <a href="login.php?action=logout" class="btn btn-outline-danger btn-sm">
                     <i class="bi bi-box-arrow-right me-1"></i>Logout
                 </a>
             </div>
